@@ -5,3 +5,13 @@
  ::name
  (fn [db]
    (:name db)))
+
+(re-frame/reg-sub
+ :time
+ (fn [db]
+   (:time db)))
+
+(re-frame/reg-sub
+ :time-color
+ (fn [db]
+   (:time-color db)))
