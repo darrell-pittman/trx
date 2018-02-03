@@ -15,3 +15,8 @@
  :time-color
  (fn [db]
    (:time-color db)))
+
+(re-frame/reg-sub
+ :database-ready
+ (fn [db]
+   (:database-ready db)))

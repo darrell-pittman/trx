@@ -21,7 +21,10 @@
 
 
 (defn main-panel []
-  (let [name (re-frame/subscribe [::subs/name])]
-    [:div "Hello from " @name
-     [clock]
-     [color-input]]))
+  (let [ready (re-frame/subscribe [:database-ready])
+        name (re-frame/subscribe [::subs/name])]
+    (if @ready
+      [:div "Hello from " @name
+       [clock]
+       [color-input]]
+      [:div "Initializing..."])))

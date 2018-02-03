@@ -22,7 +22,16 @@
 
 (re-frame/reg-event-db
  :time-color-change
- (fn [db [_ new-color]]
+ [trim-event]
+ (fn [db [new-color]]
    (assoc db :time-color new-color)))
+
+(re-frame/reg-event-db
+ :database-ready
+ [trim-event]
+ (fn [db [indexedDB]]
+   (assoc db
+          :database indexedDB
+          :database-ready true)))
    
    

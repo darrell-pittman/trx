@@ -3,4 +3,5 @@
 (def default-db
   {:name "re-frame"
    :time (js/Date.)
-   :time-color "#f88"})
+   :time-color "#f88"
+   :database-ready false})

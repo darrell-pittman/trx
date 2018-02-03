@@ -4,8 +4,7 @@
             [trx.events :as events]
             [trx.views :as views]
             [trx.config :as config]
-            [trx.data :as data]
-            [cljsjs.dexie]))
+            [trx.data :as data]))
 
 (defn dev-setup []
   (when config/debug?
@@ -28,6 +27,6 @@
 (defn ^:export init []
   (re-frame/dispatch-sync [::events/initialize-db])
   (dev-setup)
-  (data/up! :test)
+  (data/up :test 1)
   (mount-root))
 
