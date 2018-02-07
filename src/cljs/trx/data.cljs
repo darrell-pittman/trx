@@ -1,5 +1,6 @@
 (ns trx.data
-   (:require [re-frame.core :as re-frame]))
+  (:require [re-frame.core :as rf]
+            [trx.events :as events]))
 
 (defn- delete-db [name]
   (let [req (-> js/window .-indexedDB (.deleteDatabase name))]
@@ -22,7 +23,7 @@
     (set! (.-onsuccess req)
           (fn [ev]
             (let [db (-> ev .-target .-result)]
-              (re-frame/dispatch [:database-ready db]))))))
+              (rf/dispatch [::events/store-ready db]))))))
 
 (defn- init
   [name version]
