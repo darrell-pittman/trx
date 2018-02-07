@@ -46,7 +46,7 @@
               ((partial apply conj)
                (if editing
                  [[:div.col.s2 ""]
-                  [:div.col.s2]]
+                  [:div.col.s2 ""]]
                  [[:div.col.s2
                    [:a.btn-floating.light-blue
                     {:on-click #(edit (:key todo))}
