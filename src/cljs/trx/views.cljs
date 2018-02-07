@@ -18,7 +18,7 @@
      [:div {:class "circle"}]]]])
 
 
-(defn todo-item [todo {:keys [save del edit cancel]}]
+(defn todo-item [todo {{:keys [save del edit cancel]} :actions}]
   (let [edit-item (r/atom todo)]
     (fn [todo {:keys [edit-id editing]}]
       (let [edit-this (and editing (= (:key todo) @edit-id))
@@ -40,8 +40,7 @@
                 [:div.col.s2
                  [:a.btn-floating.light-blue
                   {:on-click cancel}
-                  [:i.material-icons "cancel"]]])
-          
+                  [:i.material-icons "cancel"]]])          
           (conj html
                 [:div.col.s8 (:text todo)]
                 (if editing
@@ -57,48 +56,49 @@
                     [:a.btn-floating.light-blue
                      {:on-click #(del (:key todo))}
                      [:i.material-icons "delete"]]]))))))))
-                
+
 
 (defn todo-list []
   (let [todos (rf/subscribe [::subs/todos])
-        edit-id (r/atom nil)]
+        edit-id (r/atom nil)
+        actions {:save (fn [item]
+                         (rf/dispatch [::events/save-todo item])
+                         (reset! edit-id nil))
+                 :del #(rf/dispatch [::events/delete-todo %])
+                 :edit #(reset! edit-id %)
+                 :cancel #(reset! edit-id nil)}]
     (fn []
       (let [adding (= db/NEW-ENTITY-ID @edit-id)
             state {:edit-id edit-id
                    :editing (or adding (> @edit-id db/NEW-ENTITY-ID))
-                   :save (fn [item]
-                           (rf/dispatch [::events/save-todo item])
-                           (reset! edit-id nil))
-                   :del #(rf/dispatch [::events/delete-todo %])
-                   :edit #(reset! edit-id %)
-                   :cancel #(reset! edit-id nil)}]
+                   :actions actions}]
         [:div.todos
-          [:div.row
-          [:div.col.s12.light-blue.white-text "TODO List"]]
+         [:div.row
+          [:div.col.s12.light-blue.white-text.bold [:h5 "TODO List"]]]
          (when (seq @todos)
            (for [todo (sort-by :key < @todos)]            
-            ^{:key (:key todo)}[todo-item todo state]))         
+             ^{:key (:key todo)}[todo-item todo state]))         
          (let [html [:div.row]]
            (if adding
-              (conj html [todo-item (db/new-todo) state])
+             (conj html [todo-item (db/new-todo) state])
              (when (nil? @edit-id)
                (conj html
                      [:div.col.s8 ""]
                      [:div.col.s2 ""]
                      [:div.col.s2
                       [:a.btn-floating.light-blue
-                       {:on-click #((:edit state) db/NEW-ENTITY-ID)}
+                       {:on-click #((:edit actions) db/NEW-ENTITY-ID)}
                        [:i.material-icons "add"]]]))))]))))
-      
+
 
 (defn main-panel []
   (let [ready (rf/subscribe [::subs/store-ready])
         name (rf/subscribe [::subs/name])]
     [:div.container.center
-    (if @ready
-      [:div
-       [todo-list]]
-      [:div
-       [preloader "small"]
-       [:div "Initializing..."]])]))
-  
+     (if @ready
+       [:div
+        [todo-list]]
+       [:div
+        [preloader "small"]
+        [:div "Initializing..."]])]))
+
