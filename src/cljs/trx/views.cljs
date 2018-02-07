@@ -22,7 +22,7 @@
   (let [edit-item (r/atom todo)]
     (fn [todo {:keys [edit-id editing]}]
       (let [edit-this (and editing (= (:key todo) @edit-id))
-            html [:div.row {:key (:key todo)}]]
+            html [:div.row]]
         (if edit-this
           (conj html                
                 [:div.col.s8
@@ -45,9 +45,7 @@
           (conj html
                 [:div.col.s8 (:text todo)]
                 (if editing
-                  (list
-                   [:div.col.s2 ""]
-                   [:div.col.s2 ""])
+                  [:div.col.s4 ""]
                   (list
                    ^{:key "edit"}
                    [:div.col.s2
@@ -78,7 +76,7 @@
           [:div.row
           [:div.col.s12.light-blue.white-text "TODO List"]]
          (when (seq @todos)
-           (for [todo @todos]            
+           (for [todo (sort-by :key < @todos)]            
             ^{:key (:key todo)}[todo-item todo state]))         
          (let [html [:div.row]]
            (if adding
