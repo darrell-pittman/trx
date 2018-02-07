@@ -18,11 +18,6 @@
   (reagent/render [views/main-panel]
                   (.getElementById js/document "app")))
 
-(defn dispatch-timer-event []
-  (let [now (js/Date.)]
-    (rf/dispatch [::events/timer now])))
-
-(defonce do-timer (js/setInterval dispatch-timer-event 1000))
 
 (defn ^:export init []
   (dev-setup)
