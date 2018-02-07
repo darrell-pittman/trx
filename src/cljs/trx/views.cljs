@@ -6,21 +6,7 @@
             [trx.config :as config]
             [trx.db :as db]))
 
-(defn clock []
-  [:div.example-clock
-   {:style {:color @(rf/subscribe [::subs/time-color])}}
-   (-> @(rf/subscribe [::subs/time])
-       .toTimeString
-       (clojure.string/split " ")
-       first)])
 
-(defn color-input []
-  [:div.color-input 
-  "Time color: "
-  [:input {:type "text"
-           :value @(rf/subscribe [::subs/time-color])
-           :on-change #(rf/dispatch [::events/time-color-change
-                                     (-> % .-target .-value)])}]])
 (defn preloader [size]
   [:div {:class (str "preloader-wrapper " size " active")}
    [:div {:class "spinner-layer spinner-blue-only"}

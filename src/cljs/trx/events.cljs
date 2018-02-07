@@ -19,24 +19,11 @@
           :store store
           :store-ready true)))
 
-(rf/reg-event-db
- ::timer
- [trim-event]
- (fn [db [new-time]]
-   (assoc db :time new-time)))
-
-(rf/reg-event-db
- ::time-color-change
- [trim-event]
- (fn [db [new-color]]
-   (assoc db :time-color new-color)))
-
 (rf/reg-event-fx
  ::store-ready
  [trim-event]
  (fn [_ [store]]
    {:dispatch [::initialize-db store]}))
-
 
 
 (rf/reg-event-db
@@ -54,7 +41,9 @@
   (fn [db [{:keys [key] :as todo}]]
     (let [insert? (= key trx.db/NEW-ENTITY-ID)]
       (if insert?
-        (update-in db [:todos :items] #(conj % (assoc todo :key (swap! id-gen inc))))
+        (update-in db
+                   [:todos :items]
+                   #(conj % (assoc todo :key (swap! id-gen inc))))
         (update-in db
                    [:todos :items]
                    (fn [items]
