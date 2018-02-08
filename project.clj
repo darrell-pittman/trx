@@ -22,8 +22,6 @@
                    [com.cemerick/piggieback "0.2.2"]
                    [figwheel-sidecar "0.5.14" :scope "test"]]}}
 
-  ;;    :plugins      [[lein-figwheel "0.5.13"]]}}
-
   :cljsbuild
   {:builds
    [{:id           "dev"

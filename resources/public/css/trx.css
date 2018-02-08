@@ -1,0 +1,12 @@
+table.todos tbody>tr>td:first-child {
+  width: 80%;
+}
+table.todos tbody>tr>td:first-child+td {
+  width: 10%;
+}
+
+table.todos th {
+  font-size: 20px;
+  font-weight: 900;
+}
+

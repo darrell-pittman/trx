@@ -22,10 +22,10 @@
   (let [edit-item (r/atom todo)]
     (fn [todo {:keys [edit-id editing]}]
       (let [edit-this (and editing (= (:key todo) @edit-id))
-            html [:div.row]]
+            html [:tr]]
         (if edit-this
           (conj html                
-                [:div.col.s8
+                [:td.blue-text
                  [:input
                   {:type "text"
                    :value (:text @edit-item)
@@ -33,27 +33,27 @@
                                 (swap!
                                  edit-item
                                  #(assoc % :text (-> ev .-target .-value))))}]]
-                [:div.col.s2
-                 [:a.btn-floating.light-blue
+                [:td
+                 [:a.btn-floating.blue
                   {:on-click #(save @edit-item)}
                   [:i.material-icons "save"]]]
-                [:div.col.s2
-                 [:a.btn-floating.light-blue
+                [:td
+                 [:a.btn-floating.blue
                   {:on-click cancel}
-                  [:i.material-icons "cancel"]]])          
+                  [:i.material-icons "cancel"]]])
           (conj html
-                [:div.col.s8 (:text todo)]
+                [:td.blue-text (:text todo)]
                 (if editing
-                  [:div.col.s4 ""]
+                  [:td {:colSpan 2 } ""]
                   (list
                    ^{:key "edit"}
-                   [:div.col.s2
-                    [:a.btn-floating.light-blue
+                   [:td
+                    [:a.btn-floating.blue
                      {:on-click #(edit (:key todo))}
                      [:i.material-icons "edit"]]]
                    ^{:key "save"}
-                   [:div.col.s2
-                    [:a.btn-floating.light-blue
+                   [:td
+                    [:a.btn-floating.blue
                      {:on-click #(del (:key todo))}
                      [:i.material-icons "delete"]]]))))))))
 
@@ -72,23 +72,27 @@
             state {:edit-id edit-id
                    :editing (or adding (> @edit-id db/NEW-ENTITY-ID))
                    :actions actions}]
-        [:div.todos
-         [:div.row
-          [:div.col.s12.light-blue.white-text.bold [:h5 "TODO List"]]]
-         (when (seq @todos)
-           (for [todo (sort-by :key < @todos)]            
-             ^{:key (:key todo)}[todo-item todo state]))         
-         (let [html [:div.row]]
-           (if adding
-             (conj html [todo-item (db/new-todo) state])
-             (when (nil? @edit-id)
-               (conj html
-                     [:div.col.s8 ""]
-                     [:div.col.s2 ""]
-                     [:div.col.s2
-                      [:a.btn-floating.light-blue
-                       {:on-click #((:edit actions) db/NEW-ENTITY-ID)}
-                       [:i.material-icons "add"]]]))))]))))
+        [:table.todos.striped.bordered
+         [:thead
+          [:tr
+           [:th.center-align.light-blue.white-text
+            {:colSpan 3}
+            "TODO List"]]]
+         [:tbody
+          (when (seq @todos)
+            (for [todo (sort-by :key < @todos)]            
+              ^{:key (:key todo)}[todo-item todo state]))         
+          
+          (if adding
+            [todo-item (db/new-todo) state]
+            (when (nil? @edit-id)
+              [:tr              
+               [:td ""]
+               [:td ""]
+               [:td
+                [:a.btn-floating.blue
+                 {:on-click #((:edit actions) db/NEW-ENTITY-ID)}
+                 [:i.material-icons "add"]]]]))]]))))
 
 
 (defn main-panel []
