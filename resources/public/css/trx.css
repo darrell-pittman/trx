@@ -1,11 +1,11 @@
 table.todos tbody>tr>td:first-child {
   width: 90%;
 }
-table.todos tbody>tr>td:first-child+td {
+table.todos tbody>tr>td:last-child {
   width: 4%;
 }
 
-table.todos td:last-child, td:nth-last-child(2) {
+table.todos td:last-child, table.todos td:nth-last-child(2) {
   text-align: center;
 }
 
