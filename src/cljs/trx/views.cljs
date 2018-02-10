@@ -72,7 +72,7 @@
             state {:edit-id edit-id
                    :editing (or adding (> @edit-id db/NEW-ENTITY-ID))
                    :actions actions}]
-        [:table.todos.striped.bordered
+        [:table.todos.striped.bordered.short-row
          [:thead
           [:tr
            [:th.center-align.light-blue.white-text
@@ -92,7 +92,7 @@
                [:td
                 [:a.btn-floating.blue
                  {:on-click #((:edit actions) db/NEW-ENTITY-ID)}
-                 [:i.material-icons "add"]]]]))]]))))
+                 [:i.tiny.material-icons "add"]]]]))]]))))
 
 
 (defn main-panel []
