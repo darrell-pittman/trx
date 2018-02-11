@@ -70,7 +70,7 @@
     (fn []
       (let [adding (= db/NEW-ENTITY-ID @edit-id)
             state {:edit-id edit-id
-                   :editing (or adding (> @edit-id db/NEW-ENTITY-ID))
+                   :editing (or adding (not (nil? @edit-id)))
                    :actions actions}]
         [:table.todos.striped.bordered.short-row
          [:thead
@@ -80,7 +80,7 @@
             "TODO List"]]]
          [:tbody
           (when (seq @todos)
-            (for [todo (sort-by :key < @todos)]            
+            (for [todo @todos]            
               ^{:key (:key todo)}[todo-item todo state]))         
           
           (if adding
@@ -104,5 +104,7 @@
         [todo-list]]
        [:div
         [preloader "small"]
-        [:div "Initializing..."]])]))
+        [:div "Initializing..."]]
+       )]
+    ))
 

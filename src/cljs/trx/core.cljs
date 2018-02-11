@@ -21,6 +21,6 @@
 
 (defn ^:export init []
   (dev-setup)
-  (data/up :test 1)
+  (data/up :test 1 ::events/store-ready)
   (mount-root))
 

@@ -5,8 +5,13 @@ table.todos tbody>tr>td:last-child {
   width: 4%;
 }
 
-table.todos td:last-child, table.todos td:nth-last-child(2) {
+table.todos td:last-child,
+table.todos td:nth-last-child(2) {
   text-align: center;
+}
+
+table.todos td:first-child {
+  text-align: left;
 }
 
 table.todos th {

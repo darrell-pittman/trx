@@ -1,5 +1,8 @@
 (ns trx.subs
-  (:require [re-frame.core :as rf]))
+  (:require [re-frame.core :as rf]
+            [reagent.ratom :as ra]
+            [trx.events :as events]
+            [trx.data :as data]))
 
 (rf/reg-sub
  ::name
@@ -21,10 +24,19 @@
  (fn [db]
    (:store-ready db)))
 
-(rf/reg-sub
+(rf/reg-sub-raw
  ::todos
- (fn [db]
-   (get-in db [:todos :items])))
+ (fn [app-db _]
+   (let [path [:todos :items]
+         db-token (data/load-todos
+                   (:store @app-db)
+                   {:success (fn [todos]
+                               (rf/dispatch
+                                [::events/write-to path todos]))})] 
+     (ra/make-reaction
+      (fn []
+        (get-in @app-db path))
+      :on-dispose #(rf/dispatch [::events/remove path])))))
 
 (rf/reg-sub
  ::edited-todo
