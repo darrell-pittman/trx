@@ -80,7 +80,7 @@
             "TODO List"]]]
          [:tbody
           (when (seq @todos)
-            (for [todo @todos]            
+            (for [todo (sort-by :key < @todos)]            
               ^{:key (:key todo)}[todo-item todo state]))         
           
           (if adding

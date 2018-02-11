@@ -91,6 +91,11 @@
        (let [req (.put  i-store (clj->js entity))]
          (set! (.-onsuccess req)
                (fn [ev]
+                 (success-actions onsuccess entity action))))
+       (= :delete action)
+       (let [req (.delete i-store entity)]
+         (set! (.-onsuccess req)
+               (fn [ev]
                  (success-actions onsuccess entity action))))))))
 
 
