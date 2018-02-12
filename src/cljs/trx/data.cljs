@@ -76,27 +76,27 @@
 
 (rf/reg-fx
  ::action
- (fn [{:keys [store object-store entity action onsuccess]}]
+ (fn [{:keys [store object-store data action onsuccess]}]
    (let [i-store (-> store
                      (.transaction #js [object-store] "readwrite")
                      (.objectStore object-store))]
      (cond
        (= :insert action)
-       (let [req (.add i-store (clj->js (dissoc entity :key)))]
+       (let [req (.add i-store (clj->js data))]
          (set! (.-onsuccess req)
                (fn [ev]
-                 (let [new-entity (assoc entity :key (-> ev .-target .-result))]
+                 (let [new-entity (assoc data :key (-> ev .-target .-result))]
                    (success-actions onsuccess new-entity action)))))
        (= :update action)
-       (let [req (.put  i-store (clj->js entity))]
+       (let [req (.put  i-store (clj->js data))]
          (set! (.-onsuccess req)
                (fn [ev]
-                 (success-actions onsuccess entity action))))
+                 (success-actions onsuccess data action))))
        (= :delete action)
-       (let [req (.delete i-store entity)]
+       (let [req (.delete i-store data)]
          (set! (.-onsuccess req)
                (fn [ev]
-                 (success-actions onsuccess entity action))))))))
+                 (success-actions onsuccess data action))))))))
 
 
 

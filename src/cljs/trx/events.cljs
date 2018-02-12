@@ -47,52 +47,39 @@
 (rf/reg-event-fx
  ::save-todo
  [trim-event]
- (fn [{db :db} [{:keys [key] :as todo}]]
-   (let [insert? (= key trx.db/NEW-ENTITY-ID)
-         action (if insert? :insert :update)]
-     {:db (assoc-in db [:todos :saving] true)
-      ::data/action  {:store (:store db)
-                      :object-store "todos"
-                      :entity todo
-                      :action action
-                      :onsuccess [::update-todo]}})))
-(rf/reg-event-db
- ::update-todo
- [trim-event]
- (fn [db [todo action]]
-   (let [key (:key todo)
-         insert? (= :insert action)
-         updated-db (if insert?
-                      (update-in db
-                                 [:todos :items]
-                                 #(conj % todo))
-                      (update-in db
-                                 [:todos :items]
-                                 (fn [items]
-                                   (map
-                                    (fn [item]
-                                      (if (= (:key item) key)
-                                        (merge item todo)
-                                        item))
-                                    items))))]
-     (assoc-in updated-db [:todos :saving] false))))
-
-(rf/reg-event-fx
- ::delete-todo
- [trim-event]
- (fn [{db :db} [key]]
+ (fn [{db :db} [data action]]
    {:db (assoc-in db [:todos :saving] true)
     ::data/action  {:store (:store db)
                     :object-store "todos"
-                    :entity key
-                    :action :delete
-                    :onsuccess [::update-todo-delete]}}))
+                    :data data
+                    :action action
+                    :onsuccess [::update-todo]}}))
 (rf/reg-event-db
- ::update-todo-delete
+ ::update-todo
  [trim-event]
- (fn [db [key]]
-   (let [updated-db (update-in db
-                               [:todos :items]
-                               (fn [items]
-                                 (remove #(= (:key %) key) items)))]
-     (assoc-in updated-db [:todos :saving] false))))
+ (fn [db [data action]]
+   (let [new-db
+         (cond
+           (= action :insert)
+           (update-in db
+                      [:todos :items]
+                      #(conj % data))
+           (= action :update)
+           (let [key (:key data)]
+             (update-in db
+                        [:todos :items]
+                        (fn [items]
+                          (map
+                           (fn [item]
+                             (if (= (:key item) key)
+                               (merge item data)
+                               item))
+                           items))))
+           (= action :delete)
+           (update-in db
+                      [:todos :items]
+                      (fn [items]
+                        (remove #(= (:key %) data) items))))]
+     (assoc-in new-db [:todos :saving] false))))
+
+

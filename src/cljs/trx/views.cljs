@@ -20,8 +20,9 @@
 
 (defn todo-item [todo {{:keys [save del edit cancel]} :actions}]
   (let [edit-item (r/atom todo)]
-    (fn [todo {:keys [edit-id editing]}]
-      (let [edit-this (and editing (= (:key todo) @edit-id))
+    (fn [todo {:keys [edit-id edit-action mode]}]
+      (let [editing (= :edit mode)
+            edit-this (and editing (= (:key todo) @edit-id))
             html [:tr]]
         (if edit-this
           (conj html                
@@ -49,7 +50,7 @@
                    ^{:key "edit"}
                    [:td
                     [:a.btn-floating.blue
-                     {:on-click #(edit (:key todo))}
+                     {:on-click #(edit (:key todo) :update)}
                      [:i.material-icons "edit"]]]
                    ^{:key "save"}
                    [:td
@@ -61,16 +62,25 @@
 (defn todo-list []
   (let [todos (rf/subscribe [::subs/todos])
         edit-id (r/atom nil)
+        edit-action (r/atom nil)
+        reset (fn []
+                (reset! edit-id nil)
+                (reset! edit-action nil))
         actions {:save (fn [item]
-                         (rf/dispatch [::events/save-todo item])
-                         (reset! edit-id nil))
-                 :del #(rf/dispatch [::events/delete-todo %])
-                 :edit #(reset! edit-id %)
-                 :cancel #(reset! edit-id nil)}]
+                         (rf/dispatch [::events/save-todo item @edit-action])
+                         (reset))
+                 :del #(rf/dispatch [::events/save-todo % :delete])
+                 :edit (fn [key action]
+                         (reset! edit-id key)
+                         (reset! edit-action action))
+                 :cancel #(reset)}]
     (fn []
-      (let [adding (= db/NEW-ENTITY-ID @edit-id)
+      (let [adding (= :insert @edit-action)
+            editing (= :update @edit-action)
+            mode (if (or adding editing) :edit :view)
             state {:edit-id edit-id
-                   :editing (or adding (not (nil? @edit-id)))
+                   :edit-action edit-action
+                   :mode mode
                    :actions actions}]
         [:table.todos.striped.bordered.short-row
          [:thead
@@ -85,13 +95,13 @@
           
           (if adding
             [todo-item (db/new-todo) state]
-            (when (nil? @edit-id)
+            (when-not editing
               [:tr              
                [:td ""]
                [:td ""]
                [:td
                 [:a.btn-floating.blue
-                 {:on-click #((:edit actions) db/NEW-ENTITY-ID)}
+                 {:on-click #((:edit actions) nil :insert)}
                  [:i.tiny.material-icons "add"]]]]))]]))))
 
 
