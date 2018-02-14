@@ -17,46 +17,43 @@
     [:div {:class "circle-clipper right"}
      [:div {:class "circle"}]]]])
 
+(defn eip-button
+  ([action name] (eip-button action name name))
+  ([action name key]   
+   ^{:key key}
+   [:td
+    [:a.btn-floating.blue
+     {:on-click action}
+     [:i.material-icons name]]]))
 
 (defn todo-item [todo {{:keys [save del edit cancel]} :actions}]
-  (let [edit-item (r/atom todo)]
+  (let [edit-item (r/atom todo)
+        update-text (fn [ev]
+                      (let [text (-> ev .-target .-value)]
+                        (swap! edit-item
+                               #(assoc % :text text))))]
     (fn [todo {:keys [edit-id edit-action mode]}]
       (let [editing (= :edit mode)
-            edit-this (and editing (= (:key todo) @edit-id))
-            html [:tr]]
-        (if edit-this
-          (conj html                
-                [:td.blue-text
-                 [:input
-                  {:type "text"
-                   :value (:text @edit-item)
-                   :on-change (fn [ev]
-                                (swap!
-                                 edit-item
-                                 #(assoc % :text (-> ev .-target .-value))))}]]
-                [:td
-                 [:a.btn-floating.blue
-                  {:on-click #(save @edit-item)}
-                  [:i.material-icons "save"]]]
-                [:td
-                 [:a.btn-floating.blue
-                  {:on-click cancel}
-                  [:i.material-icons "cancel"]]])
-          (conj html
-                [:td.blue-text (:text todo)]
-                (if editing
-                  [:td {:colSpan 2 } ""]
-                  (list
-                   ^{:key "edit"}
-                   [:td
-                    [:a.btn-floating.blue
-                     {:on-click #(edit (:key todo) :update)}
-                     [:i.material-icons "edit"]]]
-                   ^{:key "save"}
-                   [:td
-                    [:a.btn-floating.blue
-                     {:on-click #(del (:key todo))}
-                     [:i.material-icons "delete"]]]))))))))
+            key (:key todo)
+            edit-this (and editing (= key @edit-id))
+            text-td (fn[]
+                      [:td
+                       (if edit-this
+                         [:input {:type "text"
+                                  :value (:text @edit-item)
+                                  :on-change update-text }]
+                         (:text todo))])]
+        [:tr
+         (text-td)
+         (if edit-this
+           (list
+            (eip-button #(save @edit-item) "save")
+            (eip-button cancel "cancel"))
+           (if editing
+             [:td {:colSpan 2 } ""]
+             (list
+              (eip-button #(edit key :update) "edit")
+              (eip-button #(del key) "delete"))))]))))
 
 
 (defn todo-list []
@@ -99,10 +96,7 @@
               [:tr              
                [:td ""]
                [:td ""]
-               [:td
-                [:a.btn-floating.blue
-                 {:on-click #((:edit actions) nil :insert)}
-                 [:i.tiny.material-icons "add"]]]]))]]))))
+               (eip-button #((:edit actions) nil :insert) "add" "add")]))]]))))
 
 
 (defn main-panel []
