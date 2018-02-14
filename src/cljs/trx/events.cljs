@@ -26,12 +26,6 @@
  (fn [_ [store]]
    {:dispatch [::initialize-db store]}))
 
-
-
-
-
-
-
 (rf/reg-event-db
  ::write-to
  [trim-event]
@@ -54,6 +48,7 @@
                     :data data
                     :action action
                     :onsuccess [::update-todo]}}))
+
 (rf/reg-event-db
  ::update-todo
  [trim-event]
