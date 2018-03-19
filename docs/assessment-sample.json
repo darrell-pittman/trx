@@ -1,0 +1,118 @@
+{
+  "assessment": {
+    "name": "Sample Assessment",
+    "id": "da00144a-8f1f-4a35-9001-27b20e65c9d5",
+    "status": "published",
+    "rules_version": "0.0.1",
+    "published_date": "2018-01-23T18:25:43.511Z",
+    "questions": [
+      {
+	"id": 1,
+	"text": "How are you feeling today?",
+	"type": "text"
+      },
+      {
+	"id": 2,
+	"text": "Last Doctor Visit",
+	"type": "drop-down",
+	"options": [
+	  {
+	    "id": 7,
+	    "value": "6months",
+	    "text": "6 Months Ago"
+	  },
+	  {
+	    "id": 8,
+	    "value": "1year",
+	    "text": "One Year"
+	  },
+	  {
+	    "id": 9,
+	    "value": ">1year",
+	    "text": "More Than One Year"
+	  }
+	]
+      },
+      {
+	"id": 3,
+	"text": "When was your asthma diagnosed?",
+	"type": "date"
+      },
+      {
+	"id": 4,
+	"text": "Do you use an inhalation device?",
+	"type": "checkbox"
+      }
+    ],
+    "components": [
+      {
+	"component": {
+	  "id": 5,
+	  "title": "Component One",
+	  "questions": [3, 4]
+	}
+      }
+    ],
+    "sections": [
+      {
+	"section": {
+	  "id": 6,
+	  "title": "First Section",
+	  "children" : [
+	    {"q": 1},
+	    {"c": 5},
+	    {"q": 4}
+	  ]
+	}
+      }
+    ],
+    "meta": {
+      "system": [
+        { "7" : {"k": "LastDoctorVisit", "v": "6m"}},
+	{ "8" : {"k": "LastDoctorVisit", "v": "1y"}},
+	{ "9" : {"k": "LastDoctorVisit", "v": ">1y"}}
+      ],
+      "user" : []
+    },
+    "rules": [
+      "In here be dragons"
+    ]
+  }
+}
+
+/*****************************************************************************
+Notes:
+
+
+Code Tables:
+
+  Question Types:
+  
+  text
+  checkbox
+  drop-down
+  multi-select
+  textarea
+  radio
+
+
+
+
+
+  System Meta Keys:
+  
+  A list of known system meta keys that can be used as keys in the meta/system
+  section. 
+    
+  
+  System Meta Key Values:
+  List of known meta key values that may to meta/system keys.
+
+
+Meta Notes:
+  - meta/system key/values cannot be changed on a published assessment.
+
+*******************************************************************************/
+
+
+
