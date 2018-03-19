@@ -4,7 +4,7 @@
                  [reagent "0.7.0"]
                  [re-frame "0.10.2"]]
 
-  :plugins [[lein-cljsbuild "1.1.5"]]
+  :plugins [[lein-cljsbuild "1.1.7"]]
 
   :min-lein-version "2.5.3"
 
@@ -18,9 +18,9 @@
 
   :profiles
   {:dev
-   {:dependencies [[binaryage/devtools "0.9.4"]
+   {:dependencies [[binaryage/devtools "0.9.9"]
                    [com.cemerick/piggieback "0.2.2"]
-                   [figwheel-sidecar "0.5.14" :scope "test"]]}}
+                   [figwheel-sidecar "0.5.15" :scope "test"]]}}
 
   :cljsbuild
   {:builds
